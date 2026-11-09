@@ -1,0 +1,6 @@
+{
+  "name": "MedStudy Hub",
+  "description": "Comprehensive medical education ecosystem featuring dual University/Medical tracks, high-yield question bank, lecture library, active recall flashcards, and an independent 11-center administration headquarters.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

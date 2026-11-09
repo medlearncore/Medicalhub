@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">MedStudy Hub — Digital Medical University</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+colors: {
+background: '#f8fafc',
+foreground: '#0f172a',
+card: '#ffffff',
+primary: '#1D4ED8', /* Deep Royal Blue /
+'primary-foreground': '#ffffff',
+accent: '#06B6D4', / Aqua */
+muted: '#f1f5f9',
+'muted-foreground': '#64748b',
+border: '#e2e8f0',
+destructive: '#ef4444',
+},
+fontFamily: {
+display: ['Outfit', 'IBM Plex Sans Arabic', 'sans-serif'],
+sans: ['Figtree', 'IBM Plex Sans Arabic', 'sans-serif'],
+}
+}
+}
+}
+</script>
+<style>
+body { font-family: 'Figtree', 'IBM Plex Sans Arabic', sans-serif; background-color: #f8fafc; color: #0f172a; }
+.bg-brand { background: linear-gradient(135deg, #1D4ED8, #06B6D4); }
+.text-brand { background: linear-gradient(135deg, #1D4ED8, #06B6D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.shadow-soft { box-shadow: 0 12px 40px -16px rgba(29, 78, 216, 0.15); }
+.shadow-lift { box-shadow: 0 30px 60px -20px rgba(29, 78, 216, 0.25); }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.animate-float { animation: float 5s ease-in-out infinite; }
+.bg-glow { background-image: radial-gradient(60% 60% at 70% 40%, rgba(6, 182, 212, 0.15), transparent 70%); }
+</style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-primary/20 selection:text-primary">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-border shadow-xs">
+<div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3 cursor-pointer" onclick="navigate('home')">
+<div class="w-10 h-10 rounded-2xl bg-brand flex items-center justify-center text-white font-bold text-xl shadow-soft" id="brand-logo-icon">M</div>
+<span class="font-display font-bold text-xl tracking-tight text-slate-900" id="brand-title">MedStudy Hub</span>
+</div>
+<nav class="hidden md:flex items-center gap-1 bg-muted p-1 rounded-full">
+<button onclick="navigate('home')" id="nav-home" class="px-4 py-2 rounded-full text-sm font-semibold transition bg-primary text-white">Home</button>
+<button onclick="navigate('academy')" id="nav-academy" class="px-4 py-2 rounded-full text-sm font-semibold transition text-slate-600 hover:text-slate-900">Academy</button>
+<button onclick="navigate('dashboard')" id="nav-dashboard" class="px-4 py-2 rounded-full text-sm font-semibold transition text-slate-600 hover:text-slate-900">Dashboard</button>
+<button onclick="navigate('library')" id="nav-library" class="px-4 py-2 rounded-full text-sm font-semibold transition text-slate-600 hover:text-slate-900">Library</button>
+<button onclick="navigate('questions')" id="nav-questions" class="px-4 py-2 rounded-full text-sm font-semibold transition text-slate-600 hover:text-slate-900">Q-Bank</button>
+<button onclick="navigate('flashcards')" id="nav-flashcards" class="px-4 py-2 rounded-full text-sm font-semibold transition text-slate-600 hover:text-slate-900">Flashcards</button>
+<button onclick="navigate('community')" id="nav-community" class="px-4 py-2 rounded-full text-sm font-semibold transition text-slate-600 hover:text-slate-900">Community</button>
+</nav>
+<div class="flex items-center gap-3">
+<button onclick="toggleLang()" id="lang-btn" class="px-3 py-1.5 rounded-full border border-border text-xs font-semibold hover:bg-muted transition">عربي / EN</button>
+<button onclick="navigate('admin')" class="px-3 py-1.5 rounded-full bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition">⚙️ Admin</button>
+</div>
+</div>
+</header>
+<!-- Main Dynamic Container -->
+<main id="app-container" class="flex-1">
+<!-- Rendered via JavaScript -->
+</main>
+<!-- Footer -->
+<footer class="bg-card border-t border-border mt-20 py-8 text-center text-sm text-muted-foreground">
+<p id="footer-text">MedStudy Hub — One Workspace. Every Step. Every Specialty. 🤍</p>
+</footer>
+<!-- Comprehensive JS Application Logic with Strict Medical Image Mapping -->
+<script>
+// --- PRECISE MEDICAL IMAGE MAPPING REPOSITORY ---
+const ASSETS = {
+heart: "src/assets/heart.png",
+brain: "src/assets/brain.png",
+lungs: "src/assets/lungs.png",
+skeleton: "src/assets/skeleton.png",
+organs: "src/assets/organs.png",
+dna: "src/assets/dna.png",
+pills: "src/assets/pills.png",
+stethoscope: "src/assets/stethoscope.png",
+embryology: "src/assets/embryology.png",
+endocrine: "src/assets/endocrine.png",
+gi: "src/assets/gi.png",
+hematology: "src/assets/hematology.png",
+histology: "src/assets/histology.png",
+immunology: "src/assets/immunology.png",
+microbiology: "src/assets/microbiology.png",
+renal: "src/assets/renal.png"
+};
+// --- PLATFORM STATE & RIGOROUSLY MAPPED SUBJECTS ---
+let state = {
+lang: 'en',
+currentRoute: 'home',
+selectedSubject: null,
+adminRole: 'owner', // owner, admin, super_admin_lectures, super_admin_questions
+brand: {
+nameEn: 'MedStudy Hub',
+nameAr: 'ميد ستدي هب',
+taglineEn: 'One Workspace. Every Step. Every Specialty.',
+taglineAr: 'مساحة واحدة. كل خطوة. كل تخصص.'
+},
+subjects: [
+{ id: 'anatomy', name: 'Human Anatomy', group: 'basic', image: ASSETS.skeleton, desc: 'Detailed human body structure and topographic bone-muscle relations.', progress: 65, topicsCount: 18, qCount: 450, lecturesCount: 24 },
+{ id: 'physiology', name: 'Physiology', group: 'basic', image: ASSETS.heart, desc: 'Cellular, systemic, and organ-level functions of the human body.', progress: 80, topicsCount: 16, qCount: 520, lecturesCount: 20 },
+{ id: 'biochemistry', name: 'Biochemistry', group: 'basic', image: ASSETS.dna, desc: 'Molecular pathways, enzymes, genetics, and cellular metabolism.', progress: 50, topicsCount: 14, qCount: 380, lecturesCount: 18 },
+{ id: 'histology', name: 'Histology', group: 'basic', image: ASSETS.histology, desc: 'Microscopic structure of biological tissues and organ micro-anatomy.', progress: 40, topicsCount: 10, qCount: 290, lecturesCount: 12 },
+{ id: 'embryology', name: 'Embryology', group: 'basic', image: ASSETS.embryology, desc: 'Human developmental stages from fertilization to fetal maturation.', progress: 30, topicsCount: 9, qCount: 210, lecturesCount: 10 },
+{ id: 'genetics', name: 'Genetics', group: 'basic', image: ASSETS.dna, desc: 'Molecular genetics, heredity patterns, and genomic medicine.', progress: 70, topicsCount: 11, qCount: 340, lecturesCount: 15 },
+{ id: 'immunology', name: 'Immunology', group: 'basic', image: ASSETS.immunology, desc: 'Innate and adaptive immunity, antibodies, and immunodeficiencies.', progress: 85, topicsCount: 12, qCount: 410, lecturesCount: 16 },
+{ id: 'microbiology', name: 'Microbiology', group: 'basic', image: ASSETS.microbiology, desc: 'Bacteriology, virology, mycology, and infectious pathogenesis.', progress: 60, topicsCount: 15, qCount: 490, lecturesCount: 22 },
+{ id: 'pathology', name: 'Pathology', group: 'basic', image: ASSETS.organs, desc: 'Mechanisms of disease, cellular injury, and systemic pathology.', progress: 75, topicsCount: 20, qCount: 680, lecturesCount: 28 },
+{ id: 'pharmacology', name: 'Pharmacology', group: 'basic', image: ASSETS.pills, desc: 'Drug mechanisms, pharmacokinetics, receptors, and therapeutics.', progress: 65, topicsCount: 18, qCount: 600, lecturesCount: 25 },
+{ id: 'cardiovascular', name: 'Cardiovascular System', group: 'systems', image: ASSETS.heart, desc: 'Heart anatomy, electrophysiology, coronary circulation, and cardiology.', progress: 90, topicsCount: 15, qCount: 550, lecturesCount: 19 },
+{ id: 'respiratory', name: 'Respiratory System', group: 'systems', image: ASSETS.lungs, desc: 'Pulmonary mechanics, gas exchange, and respiratory pathology.', progress: 45, topicsCount: 12, qCount: 400, lecturesCount: 16 },
+{ id: 'gastrointestinal', name: 'Gastrointestinal System', group: 'systems', image: ASSETS.gi, desc: 'Digestive tract physiology, hepatology, and GI disorders.', progress: 55, topicsCount: 14, qCount: 460, lecturesCount: 18 },
+{ id: 'renal', name: 'Renal System', group: 'systems', image: ASSETS.renal, desc: 'Glomerular filtration, electrolyte balance, and nephrology.', progress: 60, topicsCount: 11, qCount: 380, lecturesCount: 15 },
+{ id: 'endocrine', name: 'Endocrine System', group: 'systems', image: ASSETS.endocrine, desc: 'Hormonal regulation, pituitary, thyroid, adrenal, and diabetes.', progress: 80, topicsCount: 13, qCount: 420, lecturesCount: 17 },
+{ id: 'nervous', name: 'Nervous System', group: 'systems', image: ASSETS.brain, desc: 'Central and peripheral nervous systems, neuroanatomy, and neurology.', progress: 75, topicsCount: 19, qCount: 620, lecturesCount: 26 },
+{ id: 'hematology', name: 'Hematology', group: 'systems', image: ASSETS.hematology, desc: 'Blood disorders, coagulation, anemias, and oncologic hematology.', progress: 65, topicsCount: 10, qCount: 350, lecturesCount: 14 },
+{ id: 'internal-medicine', name: 'Internal Medicine', group: 'clinical', image: ASSETS.stethoscope, desc: 'Comprehensive adult clinical medicine and diagnostics.', progress: 50, topicsCount: 25, qCount: 950, lecturesCount: 35 },
+{ id: 'surgery', name: 'General Surgery', group: 'clinical', image: ASSETS.organs, desc: 'Surgical principles, trauma, perioperative care, and procedures.', progress: 40, topicsCount: 18, qCount: 700, lecturesCount: 24 },
+{ id: 'pediatrics', name: 'Pediatrics', group: 'clinical', image: ASSETS.stethoscope, desc: 'Child health, developmental milestones, and pediatric disorders.', progress: 70, topicsCount: 16, qCount: 580, lecturesCount: 20 },
+{ id: 'obgyn', name: 'Obstetrics & Gynecology', group: 'clinical', image: ASSETS.embryology, desc: 'Maternal-fetal medicine, pregnancy, and reproductive health.', progress: 55, topicsCount: 15, qCount: 520, lecturesCount: 18 }
+]
+};
+// --- NAVIGATION & ROUTER ---
+function navigate(route, param = null) {
+state.currentRoute = route;
+if(param) state.selectedSubject = param;
+render();
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function toggleLang() {
+state.lang = state.lang === 'en' ? 'ar' : 'en';
+const html = document.documentElement;
+html.lang = state.lang;
+html.dir = state.lang === 'ar' ? 'rtl' : 'ltr';
+render();
+}
+// --- RENDER ENGINE ---
+function render() {
+const container = document.getElementById('app-container');
+const t = state.lang === 'ar' ? translations.ar : translations.en;
+// Update Branding & Title
+document.getElementById('brand-title').innerText = state.lang === 'ar' ? state.brand.nameAr : state.brand.nameEn;
+document.getElementById('page-title').innerText = ⁠${state.lang === 'ar' ? state.brand.nameAr : state.brand.nameEn} — Digital Medical University⁠;
+document.getElementById('footer-text').innerText = ⁠${state.lang === 'ar' ? state.brand.nameAr : state.brand.nameEn} — ${state.lang === 'ar' ? state.brand.taglineAr : state.brand.taglineEn} 🤍⁠;
+// Navigation active state
+['home', 'academy', 'dashboard', 'library', 'questions', 'flashcards', 'community', 'admin'].forEach(r => {
+const btn = document.getElementById('nav-' + r);
+if(btn) {
+btn.className = state.currentRoute === r
+? "px-4 py-2 rounded-full text-sm font-semibold transition bg-primary text-white"
+: "px-4 py-2 rounded-full text-sm font-semibold transition text-slate-600 hover:text-slate-900";
+}
+});
+switch(state.currentRoute) {
+case 'home': container.innerHTML = renderHome(t); break;
+case 'academy': container.innerHTML = renderAcademy(t); break;
+case 'dashboard': container.innerHTML = renderDashboard(t); break;
+case 'library': container.innerHTML = renderLibrary(t); break;
+case 'questions': container.innerHTML = renderQuestions(t); break;
+case 'flashcards': container.innerHTML = renderFlashcards(t); break;
+case 'community': container.innerHTML = renderCommunity(t); break;
+case 'subject-detail': container.innerHTML = renderSubjectDetail(t, state.selectedSubject); break;
+case 'admin': container.innerHTML = renderAdmin(t); break;
+default: container.innerHTML = renderHome(t);
+}
+}
+// --- VIEWS ---
+function renderHome(t) {
+return `
+<section class="relative overflow-hidden bg-glow py-16 lg:py-24">
+<div class="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
+<div>
+<span class="inline-block rounded-full bg-primary/10 text-primary px-4 py-1.5 text-xs font-semibold mb-4">￼
+￼{t.heroTitle}</h1>
+<p class="mt-5 text-lg text-muted-foreground">￼
+￼
+￼{t.start}</button>
+<button onclick="navigate('academy')" class="rounded-full bg-card border border-border px-7 py-3.5 font-semibold shadow-soft transition hover:border-primary">￼
+￼
+￼
+￼{t.subjects}</p></div>
+<div><p class="font-display text-3xl font-bold text-primary">12k+</p><p class="text-sm text-muted-foreground">￼
+￼{t.lectures}</p></div>
+</div>
+</div>
+<div class="relative flex justify-center">
+<div class="absolute w-80 h-80 bg-primary/15 rounded-full blur-3xl -z-10"></div>
+<img src="${ASSETS.heart}" alt="Heart Anatomy" class="w-80 h-80 object-contain animate-float drop-shadow-2xl">
+</div>
+</div>
+</section>
+<section class="max-w-7xl mx-auto px-4 py-16">
+<div class="flex justify-between items-center mb-8">
+<h2 class="font-display text-3xl font-bold">￼
+￼{t.explore} →</button>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+${state.subjects.slice(0, 4).map(s => ⁠<div onclick="navigate('subject-detail', '${s.id}')" class="bg-card p-6 rounded-3xl shadow-soft border border-border hover:shadow-lift transition cursor-pointer flex flex-col justify-between"> <div> <img src="${s.image}" alt="${s.name}" class="w-16 h-16 object-contain mb-4"> <h3 class="font-display font-bold text-lg">${s.name}</h3> <p class="text-xs text-muted-foreground mt-1 line-clamp-2">${s.desc}</p> </div> <div class="mt-6 flex justify-between items-center text-xs text-muted-foreground pt-4 border-t border-border"> <span>${s.topicsCount} modules</span> <span class="text-primary font-semibold">${s.progress}% done</span> </div> </div>⁠).join('')}
+</div>
+</section>
+`;
+}
+function renderAcademy(t) {
+return `
+<div class="max-w-7xl mx-auto px-4 py-12">
+<div class="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+<div>
+<h1 class="font-display text-4xl font-bold">￼
+￼
+￼
+￼
+￼{t.all}</button>
+<button onclick="filterAcademy('basic')" class="px-5 py-2 rounded-full text-sm font-semibold text-slate-600 academy-filter" data-f="basic">￼
+￼{t.systems}</button>
+<button onclick="filterAcademy('clinical')" class="px-5 py-2 rounded-full text-sm font-semibold text-slate-600 academy-filter" data-f="clinical">${t.clinical}</button>
+</div>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="academy-subjects-grid">
+${state.subjects.map(s => ⁠<div onclick="navigate('subject-detail', '${s.id}')" class="bg-card p-6 rounded-3xl shadow-soft border border-border hover:shadow-lift transition cursor-pointer flex flex-col justify-between"> <div class="flex items-start gap-4"> <img src="${s.image}" alt="${s.name}" class="w-16 h-16 object-contain shrink-0"> <div> <span class="text-xs uppercase tracking-wider text-primary font-bold">${s.group}</span> <h3 class="font-display font-bold text-lg mt-1">${s.name}</h3> </div> </div> <p class="text-sm text-muted-foreground mt-3 line-clamp-2">${s.desc}</p> <div class="mt-6 flex justify-between items-center text-xs text-muted-foreground pt-4 border-t border-border"> <span>📚 ${s.lecturesCount} lectures · ❓ ${s.qCount} Qs</span> <span class="text-primary font-semibold">${s.progress}%</span> </div> </div>⁠).join('')}
+</div>
+</div>
+`;
+}
+function renderDashboard(t) {
+return `
+<div class="max-w-7xl mx-auto px-4 py-12">
+<div class="grid gap-6 lg:grid-cols-12">
+<div class="bg-brand p-8 rounded-[2.5rem] text-white shadow-lift lg:col-span-8 relative overflow-hidden flex flex-col justify-between">
+<div>
+<span class="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">${t.welcome} 👋</span>
+<h1 class="font-display text-3xl sm:text-4xl font-bold mt-4">Cardiac Cycle & Heart Sounds</h1>
+<p class="text-sm opacity-90 mt-2">Cardiovascular Physiology Masterclass</p>
+</div>
+<div class="mt-8">
+<button onclick="navigate('subject-detail', 'cardiovascular')" class="rounded-full bg-card px-6 py-3 text-sm font-semibold text-primary shadow-soft hover:bg-muted transition">Continue Learning →</button>
+</div>
+<img src="${ASSETS.heart}" alt="" class="absolute -bottom-10 end-0 h-64 w-64 animate-float object-contain opacity-40 lg:opacity-80">
+</div>
+<div class="bg-card p-6 rounded-[2rem] shadow-soft border border-border lg:col-span-4 flex flex-col justify-center items-center text-center">
+<div class="w-32 h-32 rounded-full flex items-center justify-center font-display text-3xl font-bold bg-muted border-4 border-primary shadow-soft mb-4">42%</div>
+<p class="font-display text-lg font-bold">${t.progress}</p>
+<p class="text-sm text-muted-foreground mt-1">18 / 43 topics completed</p>
+<p class="text-xs text-primary font-semibold mt-3 bg-primary/10 px-4 py-1.5 rounded-full">🔥 7-day study streak</p>
+</div>
+<div class="bg-card p-6 rounded-[2rem] shadow-soft border border-border lg:col-span-6">
+<h3 class="font-display font-semibold text-lg mb-4">${t.followed}</h3>
+<div class="space-y-3">
+${state.subjects.slice(0, 3).map(s => ⁠<div onclick="navigate('subject-detail', '${s.id}')" class="flex justify-between items-center p-3.5 bg-muted rounded-2xl cursor-pointer hover:bg-primary/5 transition"> <div class="flex items-center gap-3"> <img src="${s.image}" class="w-8 h-8 object-contain"> <span class="font-medium">${s.name}</span> </div> <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-semibold">${s.progress}%</span> </div>⁠).join('')}
+</div>
+</div>
+<div class="bg-card p-6 rounded-[2rem] shadow-soft border border-border lg:col-span-6 flex flex-col justify-between">
+<div>
+<h3 class="font-display font-semibold text-lg mb-2">￼
+￼{t.dueSub}</p>
+</div>
+<div class="flex items-center justify-between mt-4">
+<span class="font-display text-5xl font-bold text-primary">24</span>
+<button onclick="navigate('flashcards')" class="rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white shadow-soft">Review Now</button>
+</div>
+</div>
+</div>
+</div>
+`;
+}
+function renderLibrary(t) {
+return ⁠<div class="max-w-7xl mx-auto px-4 py-12"> <h1 class="font-display text-4xl font-bold">${t.libTitle}</h1> <p class="text-muted-foreground mt-2">${t.libDesc}</p> <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6"> <div class="bg-card p-6 rounded-3xl shadow-soft border border-border"> <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-semibold">PDF Reference</span> <h3 class="font-display font-bold text-lg mt-3">Guyton and Hall Textbook of Medical Physiology</h3> <p class="text-xs text-muted-foreground mt-2">14th Edition · Complete Medical Physiology Reference</p> <button class="mt-6 w-full py-2.5 rounded-xl bg-muted text-sm font-semibold hover:bg-primary hover:text-white transition">Download / Read</button> </div> <div class="bg-card p-6 rounded-3xl shadow-soft border border-border"> <span class="text-xs bg-accent/10 text-accent px-3 py-1 rounded-full font-semibold">Clinical Atlas</span> <h3 class="font-display font-bold text-lg mt-3">Netter's Atlas of Human Anatomy</h3> <p class="text-xs text-muted-foreground mt-2">8th Edition · High-resolution anatomical plates</p> <button class="mt-6 w-full py-2.5 rounded-xl bg-muted text-sm font-semibold hover:bg-primary hover:text-white transition">Download / Read</button> </div> <div class="bg-card p-6 rounded-3xl shadow-soft border border-border"> <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-semibold">Lecture Slides</span> <h3 class="font-display font-bold text-lg mt-3">Cardiovascular Pathology Slides</h3> <p class="text-xs text-muted-foreground mt-2">Prof. Dr. Al-Masri · Ischemic Heart Disease</p> <button class="mt-6 w-full py-2.5 rounded-xl bg-muted text-sm font-semibold hover:bg-primary hover:text-white transition">Download / Read</button> </div> </div> </div>⁠;
+}
+function renderQuestions(t) {
+return ⁠<div class="max-w-7xl mx-auto px-4 py-12"> <h1 class="font-display text-4xl font-bold">${t.qbTitle}</h1> <p class="text-muted-foreground mt-2">${t.qbDesc}</p> <div class="mt-8 bg-card p-8 rounded-[2.5rem] shadow-soft border border-border max-w-2xl"> <h3 class="font-display text-xl font-bold mb-4">Start Custom Practice Quiz</h3> <div class="space-y-4"> <div> <label class="text-sm font-medium">Select Subject</label> <select class="w-full mt-1 p-3 rounded-xl border border-border bg-muted"> <option>Cardiovascular System</option> <option>Human Anatomy</option> <option>Physiology</option> <option>Internal Medicine</option> </select> </div> <div> <label class="text-sm font-medium">Question Count</label> <select class="w-full mt-1 p-3 rounded-xl border border-border bg-muted"> <option>10 Questions</option> <option>25 Questions</option> <option>50 Questions</option> </select> </div> <button onclick="alert('Starting interactive question session!')" class="w-full py-3.5 rounded-full bg-brand text-white font-semibold shadow-lift mt-4">Launch Quiz Session</button> </div> </div> </div>⁠;
+}
+function renderFlashcards(t) {
+return ⁠<div class="max-w-7xl mx-auto px-4 py-12"> <h1 class="font-display text-4xl font-bold">${t.fcTitle}</h1> <p class="text-muted-foreground mt-2">${t.fcDesc}</p> <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6"> <div class="bg-card p-6 rounded-3xl shadow-soft border border-border flex flex-col justify-between"> <div> <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-semibold">High Yield</span> <h3 class="font-display font-bold text-lg mt-3">Cardiovascular Pharmacology</h3> <p class="text-xs text-muted-foreground mt-1">45 cards due today</p> </div> <button onclick="alert('Opening Flashcards Deck!')" class="mt-6 w-full py-3 rounded-xl bg-brand text-white font-semibold shadow-soft">Review Deck</button> </div> <div class="bg-card p-6 rounded-3xl shadow-soft border border-border flex flex-col justify-between"> <div> <span class="text-xs bg-accent/10 text-accent px-3 py-1 rounded-full font-semibold">Anatomy Deck</span> <h3 class="font-display font-bold text-lg mt-3">Brachial Plexus & Innervation</h3> <p class="text-xs text-muted-foreground mt-1">12 cards due today</p> </div> <button onclick="alert('Opening Flashcards Deck!')" class="mt-6 w-full py-3 rounded-xl bg-brand text-white font-semibold shadow-soft">Review Deck</button> </div> </div> </div>⁠;
+}
+function renderCommunity(t) {
+return ⁠<div class="max-w-7xl mx-auto px-4 py-12"> <h1 class="font-display text-4xl font-bold">${t.commTitle}</h1> <p class="text-muted-foreground mt-2">${t.commDesc}</p> <div class="mt-8 bg-card p-8 rounded-[2.5rem] shadow-soft border border-border"> <h3 class="font-display text-xl font-bold mb-4">Active Study Discussions</h3> <div class="space-y-4"> <div class="p-4 bg-muted rounded-2xl"> <p class="font-semibold">Best approach for USMLE Step 1 Biochemistry pathways?</p> <p class="text-xs text-muted-foreground mt-1">Posted by Dr. Ahmed · 14 replies · 3 hours ago</p> </div> <div class="p-4 bg-muted rounded-2xl"> <p class="font-semibold">Cardiology high yield murmurs summary PDF</p> <p class="text-xs text-muted-foreground mt-1">Posted by Sarah M. · 28 replies · Yesterday</p> </div> </div> </div> </div>⁠;
+}
+function renderSubjectDetail(t, subjectId) {
+const s = state.subjects.find(x => x.id === subjectId) || state.subjects[0];
+return ⁠<div class="max-w-7xl mx-auto px-4 py-12"> <button onclick="navigate('academy')" class="mb-6 rounded-full bg-card border border-border px-5 py-2 text-sm font-semibold shadow-soft hover:border-primary transition">← Back to Academy</button> <div class="bg-card p-8 sm:p-12 rounded-[2.5rem] shadow-soft border border-border mb-8 grid md:grid-cols-2 gap-8 items-center"> <div> <span class="text-xs uppercase font-bold text-primary tracking-wider">${s.group} Science</span> <h1 class="font-display text-4xl sm:text-5xl font-bold text-primary mt-2">${s.name}</h1> <p class="text-muted-foreground mt-3 text-lg">${s.desc}</p> <div class="mt-6 flex flex-wrap gap-3"> <span class="bg-muted px-4 py-2 rounded-2xl text-xs font-semibold">📚 ${s.lecturesCount} Lectures</span> <span class="bg-muted px-4 py-2 rounded-2xl text-xs font-semibold">❓ ${s.qCount} Questions</span> <span class="bg-muted px-4 py-2 rounded-2xl text-xs font-semibold">📈 ${s.progress}% Progress</span> </div> </div> <div class="flex justify-center"> <img src="${s.image}" alt="${s.name}" class="w-64 h-64 object-contain animate-float drop-shadow-xl"> </div> </div> <div class="space-y-6"> <h3 class="font-display font-semibold text-2xl">Curriculum & Modules</h3> <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"> <div class="bg-card p-6 rounded-3xl shadow-soft border border-border"> <p class="text-xs text-primary font-bold">Module 1</p> <p class="font-display font-semibold text-xl mt-1">Foundations & Physiology</p> <p class="text-xs text-muted-foreground mt-4">5 Lectures · Objectives & High-Yield notes</p> </div> <div class="bg-card p-6 rounded-3xl shadow-soft border border-border"> <p class="text-xs text-primary font-bold">Module 2</p> <p class="font-display font-semibold text-xl mt-1">Pathology & Clinical Correlations</p> <p class="text-xs text-muted-foreground mt-4">6 Lectures · Case studies & Q-Bank</p> </div> <div class="bg-card p-6 rounded-3xl shadow-soft border border-border"> <p class="text-xs text-primary font-bold">Module 3</p> <p class="font-display font-semibold text-xl mt-1">Exam Review & Flashcards</p> <p class="text-xs text-muted-foreground mt-4">3 Lectures · Active Recall decks</p> </div> </div> </div> </div>⁠;
+}
+function renderAdmin(t) {
+return `
+<div class="max-w-7xl mx-auto px-4 py-12">
+<div class="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-lift mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<span class="bg-primary px-3 py-1 rounded-full text-xs font-semibold">مركز القيادة والتحكم الشامل (Master Control Center)</span>
+<h1 class="font-display text-3xl font-bold mt-2">لوحة الإدارة المركزية</h1>
+<p class="text-sm text-slate-400 mt-1">إدارة كامل محتوى المنصة، الهوية البصرية، الصلاحيات، وسجل العمليات.</p>
+</div>
+<div class="bg-slate-800 px-4 py-2 rounded-xl border border-slate-700 text-xs">
+<span>الصلاحية الحالية: </span><b class="text-emerald-400 uppercase">${state.adminRole}</b>
+</div>
+</div>
+<div class="grid md:grid-cols-3 gap-6 mb-8">
+<div class="bg-card p-6 rounded-3xl shadow-soft border border-border">
+<h3 class="font-display font-bold text-lg mb-2">🎨 إدارة الهوية والوصف</h3>
+<p class="text-xs text-muted-foreground mb-4">تعديل اسم المنصة، الشعار، الألوان والعبارات التعريفية.</p>
+<div class="space-y-3 text-sm">
+<input type="text" id="brand-input-en" value="${state.brand.nameEn}" class="w-full p-2.5 border rounded-xl bg-muted" placeholder="English Name">
+<input type="text" id="brand-input-ar" value="${state.brand.nameAr}" class="w-full p-2.5 border rounded-xl bg-muted" placeholder="الاسم بالعربي">
+<button onclick="updateBrand()" class="w-full py-2.5 bg-primary text-white font-semibold rounded-xl text-xs">حفظ التغييرات</button>
+</div>
+</div>
+<div class="bg-card p-6 rounded-3xl shadow-soft border border-border">
+<h3 class="font-display font-bold text-lg mb-2">👥 إدارة الصلاحيات والأدوار</h3>
+<p class="text-xs text-muted-foreground mb-4">تبديل دور المشرف لاختبار مستويات الصلاحيات المختلفة.</p>
+<select id="role-select" onchange="changeAdminRole(this.value)" class="w-full p-3 border rounded-xl bg-muted text-sm font-semibold">
+<option value="owner" ${state.adminRole==='owner'?'selected':''}>Owner (المالك - صلاحيات كاملة)</option>
+<option value="admin" ${state.adminRole==='admin'?'selected':''}>Admin (مشرف عام)</option>
+<option value="super_admin_lectures" ${state.adminRole==='super_admin_lectures'?'selected':''}>Super Admin - Lectures (مشرف المحاضرات)</option>
+<option value="super_admin_questions" ${state.adminRole==='super_admin_questions'?'selected':''}>Super Admin - Questions (مشرف الأسئلة)</option>
+</select>
+</div>
+<div class="bg-card p-6 rounded-3xl shadow-soft border border-border">
+<h3 class="font-display font-bold text-lg mb-2">📊 إحصائيات النظام العامة</h3>
+<div class="space-y-2 text-sm mt-4">
+<div class="flex justify-between"><span>إجمالي المواد:</span><b class="text-primary">${state.subjects.length}</b></div>
+<div class="flex justify-between"><span>المستخدمين النشطين:</span><b class="text-primary">1,420</b></div>
+<div class="flex justify-between"><span>سجل العمليات (Audit Logs):</span><b class="text-emerald-600">نشط وآمن</b></div>
+</div>
+</div>
+</div>
+</div>
+`;
+}
+function updateBrand() {
+const en = document.getElementById('brand-input-en').value;
+const ar = document.getElementById('brand-input-ar').value;
+if(en) state.brand.nameEn = en;
+if(ar) state.brand.nameAr = ar;
+alert('تم تحديث الهوية البصرية بنجاح!');
+render();
+}
+function changeAdminRole(role) {
+state.adminRole = role;
+render();
+}
+function filterAcademy(group) {
+document.querySelectorAll('.academy-filter').forEach(btn => {
+if(btn.dataset.f === group) {
+btn.className = "px-5 py-2 rounded-full text-sm font-semibold bg-primary text-white academy-filter";
+} else {
+btn.className = "px-5 py-2 rounded-full text-sm font-semibold text-slate-600 academy-filter";
+}
+});
+const grid = document.getElementById('academy-subjects-grid');
+const filtered = group === 'all' ? state.subjects : state.subjects.filter(s => s.group === group);
+grid.innerHTML = filtered.map(s => ⁠<div onclick="navigate('subject-detail', '${s.id}')" class="bg-card p-6 rounded-3xl shadow-soft border border-border hover:shadow-lift transition cursor-pointer flex flex-col justify-between"> <div class="flex items-start gap-4"> <img src="${s.image}" alt="${s.name}" class="w-16 h-16 object-contain shrink-0"> <div> <span class="text-xs uppercase tracking-wider text-primary font-bold">${s.group}</span> <h3 class="font-display font-bold text-lg mt-1">${s.name}</h3> </div> </div> <p class="text-sm text-muted-foreground mt-3 line-clamp-2">${s.desc}</p> <div class="mt-6 flex justify-between items-center text-xs text-muted-foreground pt-4 border-t border-border"> <span>📚 ${s.lecturesCount} lectures · ❓ ${s.qCount} Qs</span> <span class="text-primary font-semibold">${s.progress}%</span> </div> </div>⁠).join('');
+}
+// --- LOCALIZATION DICTIONARY ---
+const translations = {
+en: {
+heroKicker: "Digital Medical University",
+heroTitle: "Study medicine like it was designed for you.",
+heroSub: "Lectures, question banks, flashcards and progress — organized by subject, system and specialty.",
+start: "Start learning", explore: "Explore the Academy",
+subjects: "Subjects", questions: "Questions", lectures: "Lectures",
+academyTitle: "Medical Academy", university: "University Track", medical: "Medical Track",
+basic: "Basic Medical Sciences", systems: "Organ Systems", clinical: "Clinical Sciences & Specialties",
+libTitle: "Lecture Library", libDesc: "Every lecture and reference kept exactly as uploaded.",
+qbTitle: "Question Bank", qbDesc: "Import from Excel, CSV or JSON, then practice with full explanations.",
+fcTitle: "Flashcards", fcDesc: "Spaced repetition that brings back what you're about to forget.",
+commTitle: "Medical Community", commDesc: "Study together, share collections, ask peers.",
+welcome: "Welcome back", progress: "Study progress", followed: "Followed subjects",
+due: "Flashcards due", dueSub: "cards ready for review today", all: "All"
+},
+ar: {
+heroKicker: "جامعة طبية رقمية",
+heroTitle: "ادرس الطب وكأنه صُمّم من أجلك.",
+heroSub: "محاضرات، بنوك أسئلة، بطاقات تعليمية وتتبع للتقدم — منظمة حسب المادة والجهاز والتخصص.",
+start: "ابدأ التعلّم", explore: "استكشف الأكاديمية",
+subjects: "مادة دراسية", questions: "سؤال امتحان", lectures: "محاضرة",
+academyTitle: "الأكاديمية الطبية", university: "المسار الجامعي", medical: "المسار الطبي",
+basic: "العلوم الطبية الأساسية", systems: "أجهزة الجسم", clinical: "العلوم الإكلينيكية والتخصصات",
+libTitle: "مكتبة المحاضرات", libDesc: "كل محاضرة ومرجع يبقى كما رُفع تماماً.",
+qbTitle: "بنك الأسئلة", qbDesc: "تدرّب مع بنوك أسئلة شاملة وشرح تفصيلي لكل إجابة.",
+fcTitle: "البطاقات التعليمية", fcDesc: "تكرار متباعد يعيد إليك ما أوشكت على نسيانه.",
+commTitle: "المجتمع الطبي", commDesc: "ادرس مع زملائك وشارك المجموعات والمراجع.",
+welcome: "مرحباً بعودتك", progress: "تقدم الدراسة", followed: "المواد المتابَعة",
+due: "بطاقات للمراجعة", dueSub: "بطاقة جاهزة للمراجعة اليوم", all: "الكل"
+}
+};
+// Initialize application on load
+navigate('home');
+</script>
+</body>
+</html>
